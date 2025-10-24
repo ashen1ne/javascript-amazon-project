@@ -6,6 +6,8 @@ let productsHTML = `
 
 `;
 
+const addedMessageTimeouts = {};
+
 products.forEach((product) => {
     productsHTML += `
         <div class="product-container">
