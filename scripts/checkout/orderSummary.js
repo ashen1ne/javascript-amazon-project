@@ -3,8 +3,9 @@ import { getProduct } from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import { hello } from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
+import { calculateDeliveryDate, deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
 import { renderPaymentSummary } from './paymentSummary.js';
+import { renderCheckoutHeader } from './checkoutHeader.js';
 
 export function renderOrderSummary() {
 
@@ -22,14 +23,7 @@ export function renderOrderSummary() {
     
     const deliveryOption = getDeliveryOption(deliveryOptionId);
 
-      const today = dayjs();
-      const deliveryDate = today.add(
-        deliveryOption.deliveryDays,
-        'days'
-      );
-      const dateString = deliveryDate.format(
-        'dddd, MMMM D'
-      ) 
+    const dateString = calculateDeliveryDate(deliveryOption);
 
       cartSummaryHTML += `
           <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
@@ -46,7 +40,7 @@ export function renderOrderSummary() {
                     ${matchingProduct.name}
                   </div>
                   <div class="product-price js-product-price-${matchingProduct.id}">
-                    $${formatCurrency(matchingProduct.priceCents)}
+                    $${formatCurrency(matchingProduct.priceCents * cartItem.quantity)}
                   </div>
                   <div class="product-quantity">
                     <span>
@@ -85,14 +79,7 @@ export function renderOrderSummary() {
 
     deliveryOptions.forEach((deliveryOption) => {
 
-      const today = dayjs();
-      const deliveryDate = today.add(
-        deliveryOption.deliveryDays,
-        'days'
-      );
-      const dateString = deliveryDate.format(
-        'dddd, MMMM D'
-      ) 
+      const dateString = calculateDeliveryDate(deliveryOption);
 
       const priceString = deliveryOption.priceCents === 0 ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)}`;
 
@@ -127,10 +114,9 @@ export function renderOrderSummary() {
   function updateCartQauntity() {
     const quantity = calculateQuantityCart();
     document.querySelector('.js-return-to-home-link').innerHTML = `${quantity} items`; 
-
   }
 
-
+  renderCheckoutHeader();
 
   document.querySelectorAll('.js-delete-link').forEach((deleteLink) => {
     deleteLink.addEventListener('click', () => {
@@ -172,7 +158,7 @@ export function renderOrderSummary() {
     
     updateCartQauntity();
     renderPaymentSummary();
-      
+    renderOrderSummary();
     });
   }); 
 
