@@ -1,9 +1,10 @@
 import { cart, removeFromCart, calculateQuantityCart, updateQuantity, updateDeliveryOption } from '../../data/cart.js';
-import { products } from '../../data/products.js';
+import { getProduct } from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import { hello } from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import { deliveryOptions } from '../../data/deliveryOptions.js';
+import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
+import { renderPaymentSummary } from './paymentSummary.js';
 
 
 const today = dayjs();
@@ -19,25 +20,13 @@ export function renderOrderSummary() {
 
   cart.forEach((cartItem) => {
 
-      const productId = cartItem.productId;
+    const productId = cartItem.productId;
 
-      let matchingProduct;
+    const matchingProduct = getProduct(productId);
 
-      products.forEach((product) => {
-          if (product.id === productId) {
-              matchingProduct = product;
-          }
-      });
-
-      const deliveryOptionId = cartItem.deliveryOptionId;
-      
-      let deliveryOption;
-
-      deliveryOptions.forEach((option) => {
-        if (option.id === deliveryOptionId) {
-          deliveryOption = option;
-        }
-      });
+    const deliveryOptionId = cartItem.deliveryOptionId;
+    
+    const deliveryOption = getDeliveryOption(deliveryOptionId);
 
       const today = dayjs();
       const deliveryDate = today.add(
@@ -62,7 +51,7 @@ export function renderOrderSummary() {
                   <div class="product-name">
                     ${matchingProduct.name}
                   </div>
-                  <div class="product-price">
+                  <div class="product-price js-product-price-${matchingProduct.id}">
                     $${formatCurrency(matchingProduct.priceCents)}
                   </div>
                   <div class="product-quantity">
@@ -161,8 +150,7 @@ export function renderOrderSummary() {
       container.remove();
       
       updateCartQauntity();
-
-
+      renderPaymentSummary();
     });
   });
 
@@ -177,18 +165,19 @@ export function renderOrderSummary() {
 
   document.querySelectorAll('.js-save-link').forEach((saveLink) => {
     saveLink.addEventListener(('click'), () => {
-      const productId = saveLink.dataset.productId;
-      const quantityInput = document.querySelector(`.js-quantity-input-${productId}`)
-      const updateQuantityValue = Number(quantityInput.value);
-      const cartContainer = document.querySelector(`.js-cart-item-container-${productId}`);
+    const productId = saveLink.dataset.productId;
+    const quantityInput = document.querySelector(`.js-quantity-input-${productId}`)
+    const updateQuantityValue = Number(quantityInput.value);
+    const cartContainer = document.querySelector(`.js-cart-item-container-${productId}`);
 
-      cartContainer.classList.remove('is-editing-quantity');
+    cartContainer.classList.remove('is-editing-quantity');
 
-      document.querySelector(`.js-quantity-label-${productId}`).innerHTML = updateQuantityValue;
+    document.querySelector(`.js-quantity-label-${productId}`).innerHTML = updateQuantityValue;
 
-      updateQuantity(productId, updateQuantityValue);
-      
-      updateCartQauntity();
+    updateQuantity(productId, updateQuantityValue);
+    
+    updateCartQauntity();
+    renderPaymentSummary();
       
     });
   }); 
@@ -200,6 +189,7 @@ export function renderOrderSummary() {
       const { productId, deliveryOptionId } = element.dataset
       updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
+      renderPaymentSummary();
     })
   });
 
