@@ -73,7 +73,6 @@ function updateCartQauntity() {
 document.querySelector('.js-products-grid')
   .innerHTML = productsHTML;
 
-
 export function showAddedMessage(productId) {
   const addedToCart = document.querySelector(`.js-added-to-cart-${productId}`);
   addedToCart.classList.add('js-added-to-cart');
@@ -89,7 +88,6 @@ export function showAddedMessage(productId) {
   
   addedMessageTimeouts[productId] = timeout;
 }
-
 
 document.querySelectorAll('.js-add-to-cart')
   .forEach((button) => {

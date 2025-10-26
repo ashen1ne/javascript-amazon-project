@@ -51,7 +51,6 @@ function saveToStorage() {
   localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-
 export function calculateQuantityCart() {
   let cartQuantity = 0;
 
