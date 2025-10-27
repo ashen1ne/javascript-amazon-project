@@ -1,4 +1,4 @@
-import { cart, removeFromCart, calculateQuantityCart, updateQuantity, updateDeliveryOption } from '../../data/cart.js';
+import { cart } from '../../data/cart-class.js';
 import { getProduct } from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import { hello } from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
@@ -11,7 +11,7 @@ export function renderOrderSummary() {
 
   let cartSummaryHTML = '';
 
-  cart.forEach((cartItem) => {
+  cart.cartItems.forEach((cartItem) => {
 
     const productId = cartItem.productId;
 
@@ -112,7 +112,7 @@ export function renderOrderSummary() {
 
 
   function updateCartQauntity() {
-    const quantity = calculateQuantityCart();
+    const quantity = cart.calculateQuantityCart();
     document.querySelector('.js-return-to-home-link').innerHTML = `${quantity} items`; 
   }
 
@@ -121,7 +121,7 @@ export function renderOrderSummary() {
   document.querySelectorAll('.js-delete-link').forEach((deleteLink) => {
     deleteLink.addEventListener('click', () => {
       const productId = deleteLink.dataset.productId;
-      removeFromCart(productId);
+      cart.removeFromCart(productId);
 
       const container = document.querySelector(
         `.js-cart-item-container-${productId}`
@@ -154,7 +154,7 @@ export function renderOrderSummary() {
 
     document.querySelector(`.js-quantity-label-${productId}`).innerHTML = updateQuantityValue;
 
-    updateQuantity(productId, updateQuantityValue);
+    cart.updateQuantity(productId, updateQuantityValue);
     
     updateCartQauntity();
     renderPaymentSummary();
@@ -167,7 +167,7 @@ export function renderOrderSummary() {
   document.querySelectorAll('.js-delivery-option').forEach((element) => {
     element.addEventListener('click', () => {
       const { productId, deliveryOptionId } = element.dataset
-      updateDeliveryOption(productId, deliveryOptionId);
+      cart.updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
       renderPaymentSummary();
     })
