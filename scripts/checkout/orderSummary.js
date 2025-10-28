@@ -1,5 +1,5 @@
 import { cart } from '../../data/cart-class.js';
-import { getProduct } from '../../data/products.js';
+import { getProduct, loadProducts } from '../../data/products.js';
 import { formatCurrency } from '../utils/money.js';
 import { hello } from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
@@ -14,7 +14,7 @@ export function renderOrderSummary() {
   cart.cartItems.forEach((cartItem) => {
 
     const productId = cartItem.productId;
-
+    
     const matchingProduct = getProduct(productId);
 
     const deliveryOptionId = cartItem.deliveryOptionId;
