@@ -30,12 +30,9 @@ export default class Cart {
         localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
     }
 
-    addToCart(productId) {
+    addToCart(productId, selectQuantityValue = 1) {
 
         let matchingItem;
-        const selectorQuantity = document.querySelector(`.js-quantity-selector-${productId}`);
-        const selectQuantityValue = selectorQuantity ? Number(selectorQuantity.value) : 1;
-
         this.cartItems.forEach((cartItem) => {
             if (productId === cartItem.productId) {
             matchingItem = cartItem;
@@ -53,6 +50,7 @@ export default class Cart {
             });
         }
 
+        console.log(cart.cartItems);
         this.saveToStorage();
     }
 

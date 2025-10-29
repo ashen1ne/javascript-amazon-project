@@ -43,15 +43,24 @@
         }
         
         async function sendGreetingWithoutData() {
-            const response = await fetch('https://supersimplebackend.dev/greeting', {
+            try {
+                 const response = await fetch('https://supersimplebackend.dev/greeting', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: 'Zakhar' })
-            })
-            const data = await response.text();
-            console.log(data);
+                })
+                if (response.status >= 400) {
+                    throw response;
+                }
+                const data = await response.text();
+                console.log(data);
+            } catch (error) {
+                if (error.status === 400) {
+                    console.log(await error.json());
+                }
+            }
+           
         }
         
         getGreeting();
@@ -71,4 +80,4 @@
 
     </script>
 </body>
-</html>
+</html> 
